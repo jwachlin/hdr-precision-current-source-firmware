@@ -22,7 +22,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdint.h>
+#include <stdbool.h>
+#include "usbd_cdc_if.h"
+#include "usb_interface.h"
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +49,21 @@ I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
 
+static const float _r_default = 10000000.0;
+static const float _r_g6 = 1000000.0;
+static const float _r_g5 = 100000.0;
+static const float _r_g4 = 10000.0;
+static const float _r_g3 = 1000.0;
+static const float _r_g2 = 100.0;
+static const float _r_g1 = 12.76666;
+static const float _r_g0 = 7.66;
+
+static const float _fet_r_ohm = 0.048;
+
+static float _ref_v = 3.0;
+
+static usb_command_t _usb_command;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,6 +76,53 @@ static void MX_I2C1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+static void set_fets_on(float current_command_ma)
+{
+	// Set all to off
+	HAL_GPIO_WritePin(GPIOB, G0_Pin|G1_Pin|G2_Pin|G3_Pin
+	                          |G4_Pin|G5_Pin|G6_Pin, GPIO_PIN_RESET);
+
+	// I_out = V_rev / R
+	// V_ref on DAC
+
+}
+
+static void set_scale(uint8_t scale)
+{
+	if(scale > 6)
+	{
+		return;
+	}
+
+	// Set all to off
+	HAL_GPIO_WritePin(GPIOB, G0_Pin|G1_Pin|G2_Pin|G3_Pin
+		                      |G4_Pin|G5_Pin|G6_Pin, GPIO_PIN_RESET);
+
+	switch(scale){
+	case 0:
+		HAL_GPIO_WritePin(GPIOB, G0_Pin, GPIO_PIN_SET);
+		break;
+	case 1:
+		HAL_GPIO_WritePin(GPIOB, G1_Pin, GPIO_PIN_SET);
+		break;
+	case 2:
+		HAL_GPIO_WritePin(GPIOB, G2_Pin, GPIO_PIN_SET);
+		break;
+	case 3:
+		HAL_GPIO_WritePin(GPIOB, G3_Pin, GPIO_PIN_SET);
+		break;
+	case 4:
+		HAL_GPIO_WritePin(GPIOB, G4_Pin, GPIO_PIN_SET);
+		break;
+	case 5:
+		HAL_GPIO_WritePin(GPIOB, G5_Pin, GPIO_PIN_SET);
+		break;
+	case 6:
+		HAL_GPIO_WritePin(GPIOB, G6_Pin, GPIO_PIN_SET);
+		break;
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -100,6 +166,19 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+	// Check if we've received a command
+	if(is_usb_recv(&_usb_command))
+	{
+		if(_usb_command.msg_type == SET_CURRENT)
+		{
+
+		}
+		else if(_usb_command.msg_type == SET_SCALE)
+		{
+			set_scale(_usb_command.payload[0]);
+		}
+	}
 
     /* USER CODE BEGIN 3 */
   }

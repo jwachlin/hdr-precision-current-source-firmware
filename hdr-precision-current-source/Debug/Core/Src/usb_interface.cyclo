@@ -1,0 +1,4 @@
+../Core/Src/usb_interface.c:23:13:process_byte	9
+../Core/Src/usb_interface.c:70:6:is_usb_recv	2
+../Core/Src/usb_interface.c:82:6:usb_handle_recv	3
+../Core/Src/usb_interface.c:98:6:transmit_config_value	2
