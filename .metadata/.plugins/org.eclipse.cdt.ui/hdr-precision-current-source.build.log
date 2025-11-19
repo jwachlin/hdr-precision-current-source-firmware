@@ -1,17 +1,47 @@
-20:21:46 **** Incremental Build of configuration Debug for project hdr-precision-current-source ****
+20:35:55 **** Incremental Build of configuration Debug for project hdr-precision-current-source ****
 make -j7 all 
-arm-none-eabi-gcc "../USB_DEVICE/App/usbd_cdc_if.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L412xx -c -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"USB_DEVICE/App/usbd_cdc_if.d" -MT"USB_DEVICE/App/usbd_cdc_if.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "USB_DEVICE/App/usbd_cdc_if.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L412xx -c -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:63:14: warning: '_ref_v' defined but not used [-Wunused-variable]
+   63 | static float _ref_v = 3.0;
+      |              ^~~~~~
+../Core/Src/main.c:61:20: warning: '_fet_r_ohm' defined but not used [-Wunused-const-variable=]
+   61 | static const float _fet_r_ohm = 0.048;
+      |                    ^~~~~~~~~~
+../Core/Src/main.c:59:20: warning: '_r_g0' defined but not used [-Wunused-const-variable=]
+   59 | static const float _r_g0 = 7.66;
+      |                    ^~~~~
+../Core/Src/main.c:58:20: warning: '_r_g1' defined but not used [-Wunused-const-variable=]
+   58 | static const float _r_g1 = 12.76666;
+      |                    ^~~~~
+../Core/Src/main.c:57:20: warning: '_r_g2' defined but not used [-Wunused-const-variable=]
+   57 | static const float _r_g2 = 100.0;
+      |                    ^~~~~
+../Core/Src/main.c:56:20: warning: '_r_g3' defined but not used [-Wunused-const-variable=]
+   56 | static const float _r_g3 = 1000.0;
+      |                    ^~~~~
+../Core/Src/main.c:55:20: warning: '_r_g4' defined but not used [-Wunused-const-variable=]
+   55 | static const float _r_g4 = 10000.0;
+      |                    ^~~~~
+../Core/Src/main.c:54:20: warning: '_r_g5' defined but not used [-Wunused-const-variable=]
+   54 | static const float _r_g5 = 100000.0;
+      |                    ^~~~~
+../Core/Src/main.c:53:20: warning: '_r_g6' defined but not used [-Wunused-const-variable=]
+   53 | static const float _r_g6 = 1000000.0;
+      |                    ^~~~~
+../Core/Src/main.c:52:20: warning: '_r_default' defined but not used [-Wunused-const-variable=]
+   52 | static const float _r_default = 10000000.0;
+      |                    ^~~~~~~~~~
 arm-none-eabi-gcc -o "hdr-precision-current-source.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/jakewachlin/Documents/hdr-precision-current-source-firmware/hdr-precision-current-source/STM32L412KBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="hdr-precision-current-source.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: hdr-precision-current-source.elf
  
 arm-none-eabi-size  hdr-precision-current-source.elf 
 arm-none-eabi-objdump -h -S hdr-precision-current-source.elf  > "hdr-precision-current-source.list"
    text	   data	    bss	    dec	    hex	filename
-  33920	    268	   6756	  40944	   9ff0	hdr-precision-current-source.elf
+  35428	    268	   6756	  42452	   a5d4	hdr-precision-current-source.elf
 Finished building: default.size.stdout
  
 Finished building: hdr-precision-current-source.list
  
 
-20:21:47 Build Finished. 0 errors, 0 warnings. (took 1s.301ms)
+20:35:57 Build Finished. 0 errors, 10 warnings. (took 1s.648ms)
 

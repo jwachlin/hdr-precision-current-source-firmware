@@ -77,15 +77,62 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-static void set_fets_on(float current_command_ma)
+static void set_current_level(float current_command_ma)
 {
 	// Set all to off
 	HAL_GPIO_WritePin(GPIOB, G0_Pin|G1_Pin|G2_Pin|G3_Pin
 	                          |G4_Pin|G5_Pin|G6_Pin, GPIO_PIN_RESET);
 
 	// I_out = V_rev / R
-	// V_ref on DAC
-
+	// V_ref on DAC can range from 50uV to 3.3V
+	// Default ranges from 5pA to 330nA
+	// G6 on ranges from 0.05nA to 3.3uA
+	// G5 on ranges from 0.5nA to 33uA
+	// G4 on ranges from 5.0nA to 330uA
+	// G3 on ranges from 50nA to 3.3mA
+	// G2 on ranges from 500nA to 33mA
+	// G1 on ranges from 3.9uA to 258.6mA
+	// G0 on ranges from 6.5uA to 430.8mA
+	if(current_command_ma < (300.0 * 1.0e-6))
+	{
+		// No other FETs on
+		// TODO control DAC
+	}
+	else if(current_command_ma < 0.003)
+	{
+		HAL_GPIO_WritePin(GPIOB, G6_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 0.03)
+	{
+		HAL_GPIO_WritePin(GPIOB, G5_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 0.3)
+	{
+		HAL_GPIO_WritePin(GPIOB, G4_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 3.0)
+	{
+		HAL_GPIO_WritePin(GPIOB, G3_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 30.0)
+	{
+		HAL_GPIO_WritePin(GPIOB, G2_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 240.0)
+	{
+		HAL_GPIO_WritePin(GPIOB, G1_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
+	else if(current_command_ma < 430.0)
+	{
+		HAL_GPIO_WritePin(GPIOB, G0_Pin, GPIO_PIN_SET);
+		// TODO control DAC
+	}
 }
 
 static void set_scale(uint8_t scale)
@@ -172,7 +219,9 @@ int main(void)
 	{
 		if(_usb_command.msg_type == SET_CURRENT)
 		{
-
+			float current_command_ma = 0.0;
+			memcpy(&current_command_ma, &_usb_command.payload[0], 4);
+			set_current_level(current_command_ma);
 		}
 		else if(_usb_command.msg_type == SET_SCALE)
 		{
