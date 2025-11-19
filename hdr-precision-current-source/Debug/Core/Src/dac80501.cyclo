@@ -1,0 +1,9 @@
+../Core/Src/dac80501.c:20:19:DAC80501_Init	8
+../Core/Src/dac80501.c:64:19:DAC80501_WriteRegister	2
+../Core/Src/dac80501.c:80:19:DAC80501_ReadRegister	5
+../Core/Src/dac80501.c:107:19:DAC80501_GetDeviceID	1
+../Core/Src/dac80501.c:114:19:DAC80501_SetValue	1
+../Core/Src/dac80501.c:121:19:DAC80501_SetVoltage	4
+../Core/Src/dac80501.c:146:19:DAC80501_SetGain	2
+../Core/Src/dac80501.c:160:19:DAC80501_PowerDown	3
+../Core/Src/dac80501.c:177:19:DAC80501_SoftwareReset	3
