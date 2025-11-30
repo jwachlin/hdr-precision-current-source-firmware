@@ -108,5 +108,21 @@ void transmit_config_value(uint8_t index, float config_value)
 		chk += usb_tx_buffer[i];
 	}
 	usb_tx_buffer[7] = chk;
-	CDC_Transmit_HS(usb_tx_buffer, 8);
+	CDC_Transmit_FS(usb_tx_buffer, 8);
+}
+
+void transmit_current_setting(float current_setting_mA)
+{
+	usb_tx_buffer[0] = 0xAA;
+	usb_tx_buffer[1] = CURRENT_SET;
+	usb_tx_buffer[2] = 4;
+	memcpy(&usb_tx_buffer[3], &current_setting_mA, 4);
+	uint8_t chk = 0;
+	int32_t i;
+	for(i = 1; i < 7; i++)
+	{
+		chk += usb_tx_buffer[i];
+	}
+	usb_tx_buffer[7] = chk;
+	CDC_Transmit_FS(usb_tx_buffer, 8);
 }

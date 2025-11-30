@@ -24,7 +24,7 @@
 #define DAC80501_REG_DAC        0x08
 
 /* Device ID */
-#define DAC80501_DEVICE_ID      0x0014
+#define DAC80501_DEVICE_ID      0x0115
 
 /* Configuration Register Bits */
 #define DAC80501_CONFIG_REF_PWDWN   (1 << 0)  // Reference power down

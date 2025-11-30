@@ -42,7 +42,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define CONSTANT_REF_MODE		true
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -62,6 +62,7 @@ static const float _r_g0 = 7.66;
 static const float _fet_r_ohm = 0.048;
 
 static float _ref_v = 3.0;
+static uint8_t _current_scale = 7;
 
 static usb_command_t _usb_command;
 
@@ -80,94 +81,38 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-static void set_current_level(float current_command_ma)
+static float _calc_r_parallel_to_default(float r)
 {
-	// Set all to off
-	HAL_GPIO_WritePin(GPIOB, G0_Pin|G1_Pin|G2_Pin|G3_Pin
-	                          |G4_Pin|G5_Pin|G6_Pin, GPIO_PIN_RESET);
+	return (1.0 / ((1.0 / _r_default) + (1.0 / r)) );
+}
 
-	// I_out = V_rev / R
-	// V_ref on DAC can range from ~50uV to 2.5V
-	// Default ranges from 5pA to 250nA
-	// G6 on ranges from 0.05nA to 2.5uA
-	// G5 on ranges from 0.5nA to 25uA
-	// G4 on ranges from 5.0nA to 250uA
-	// G3 on ranges from 50nA to 2.5mA
-	// G2 on ranges from 500nA to 25mA
-	// G1 on ranges from 3.9uA to 195.8mA
-	// G0 on ranges from 6.5uA to 326.4mA
-	if(current_command_ma < (250.0 * 1.0e-6))
-	{
-		// No other FETs on
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_default;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 0.002)
-	{
-		HAL_GPIO_WritePin(GPIOB, G6_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g6;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 0.02)
-	{
-		HAL_GPIO_WritePin(GPIOB, G5_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g5;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 0.2)
-	{
-		HAL_GPIO_WritePin(GPIOB, G4_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g4;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 2.0)
-	{
-		HAL_GPIO_WritePin(GPIOB, G3_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g3;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 20.0)
-	{
-		HAL_GPIO_WritePin(GPIOB, G2_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g2;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 190.0)
-	{
-		HAL_GPIO_WritePin(GPIOB, G1_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g1;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
-	else if(current_command_ma < 326.0)
-	{
-		HAL_GPIO_WritePin(GPIOB, G0_Pin, GPIO_PIN_SET);
-		// control DAC
-		float v_output = (current_command_ma * 0.001) * _r_g0;
-		uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-		DAC80501_SetVoltage(&_dac_handle, cmd_mv);
-	}
+static float _get_current_level(void)
+{
+#ifdef CONSTANT_REF_MODE
+	// Reference not changed from 3.0V
+	_ref_v = 3.0;
+#endif
+
+	float r_vals[8];
+	r_vals[0] = _calc_r_parallel_to_default(_r_g0 + _fet_r_ohm);
+	r_vals[1] = _calc_r_parallel_to_default(_r_g1 + _fet_r_ohm);
+	r_vals[2] = _calc_r_parallel_to_default(_r_g2 + _fet_r_ohm);
+	r_vals[3] = _calc_r_parallel_to_default(_r_g3 + _fet_r_ohm);
+	r_vals[4] = _calc_r_parallel_to_default(_r_g4 + _fet_r_ohm);
+	r_vals[5] = _calc_r_parallel_to_default(_r_g5 + _fet_r_ohm);
+	r_vals[6] = _calc_r_parallel_to_default(_r_g6 + _fet_r_ohm);
+	r_vals[7] = _r_default;
+	float current_level_A = _ref_v / r_vals[_current_scale];
+	return current_level_A * 1000.0;
 }
 
 static void set_scale(uint8_t scale)
 {
-	if(scale > 6)
+	if(scale > 7)
 	{
 		return;
 	}
+	_current_scale = scale;
 
 	// Set all to off
 	HAL_GPIO_WritePin(GPIOB, G0_Pin|G1_Pin|G2_Pin|G3_Pin
@@ -197,6 +142,86 @@ static void set_scale(uint8_t scale)
 		break;
 	}
 }
+
+static void _set_voltage_on_dac(float v_output)
+{
+	uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
+	DAC80501_SetVoltage(&_dac_handle, cmd_mv);
+	_ref_v = cmd_mv * 0.001;
+}
+
+static void set_current_level(float current_command_ma)
+{
+	// I_out = V_rev / R
+	// V_ref on DAC can range from ~50uV to 2.5V
+	// Default ranges from 5pA to 250nA
+	// G6 on ranges from 0.05nA to 2.5uA
+	// G5 on ranges from 0.5nA to 25uA
+	// G4 on ranges from 5.0nA to 250uA
+	// G3 on ranges from 50nA to 2.5mA
+	// G2 on ranges from 500nA to 25mA
+	// G1 on ranges from 3.9uA to 195.8mA
+	// G0 on ranges from 6.5uA to 326.4mA
+	if(current_command_ma < (250.0 * 1.0e-6))
+	{
+		// No other FETs on
+		set_scale(7);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _r_default;
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 0.002)
+	{
+		set_scale(6);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g6 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 0.02)
+	{
+		set_scale(5);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g5 + _fet_r_ohm);
+
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 0.2)
+	{
+		set_scale(4);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g4 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 2.0)
+	{
+		set_scale(3);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g3 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 20.0)
+	{
+		set_scale(2);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g2 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 190.0)
+	{
+		set_scale(1);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g1 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+	else if(current_command_ma < 326.0)
+	{
+		set_scale(0);
+		// control DAC
+		float v_output = (current_command_ma * 0.001) * _calc_r_parallel_to_default(_r_g0 + _fet_r_ohm);
+		_set_voltage_on_dac(v_output);
+	}
+}
+
 
 /* USER CODE END 0 */
 
@@ -237,6 +262,8 @@ int main(void)
   DAC80501_Init(&_dac_handle, &hi2c1, 0x48, 2500); //A0 is GND. Internal 2.5V reference used
   DAC80501_SetGain(&_dac_handle, false); // 1X gain, so up to 2.5V output
 
+  set_scale(7); // Lowest current by default
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -253,10 +280,14 @@ int main(void)
 			float current_command_ma = 0.0;
 			memcpy(&current_command_ma, &_usb_command.payload[0], 4);
 			set_current_level(current_command_ma);
+			HAL_Delay(10);
+			transmit_current_setting(_get_current_level());
 		}
 		else if(_usb_command.msg_type == SET_SCALE)
 		{
 			set_scale(_usb_command.payload[0]);
+			HAL_Delay(10);
+			transmit_current_setting(_get_current_level());
 		}
 	}
 
