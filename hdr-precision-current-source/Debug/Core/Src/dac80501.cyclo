@@ -5,5 +5,5 @@
 ../Core/Src/dac80501.c:114:19:DAC80501_SetValue	1
 ../Core/Src/dac80501.c:121:19:DAC80501_SetVoltage	4
 ../Core/Src/dac80501.c:146:19:DAC80501_SetGain	2
-../Core/Src/dac80501.c:160:19:DAC80501_PowerDown	3
-../Core/Src/dac80501.c:177:19:DAC80501_SoftwareReset	3
+../Core/Src/dac80501.c:161:19:DAC80501_PowerDown	3
+../Core/Src/dac80501.c:178:19:DAC80501_SoftwareReset	3

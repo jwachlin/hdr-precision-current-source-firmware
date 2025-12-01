@@ -42,7 +42,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-//#define CONSTANT_REF_MODE		true
+#define CONSTANT_REF_MODE		true
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -260,7 +260,7 @@ int main(void)
 
   // Set up DAC
   DAC80501_Init(&_dac_handle, &hi2c1, 0x48, 1250); //A0 is GND. Internal 1.25V reference used
-  DAC80501_SetGain(&_dac_handle, true); // 2X gain, so up to 2.5V output
+  DAC80501_SetGain(&_dac_handle, false); // 1X gain, so up to 2.5V output
 
   HAL_Delay(10);
   uint16_t status_val = 0;

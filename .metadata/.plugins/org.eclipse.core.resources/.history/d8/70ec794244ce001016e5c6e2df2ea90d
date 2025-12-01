@@ -42,7 +42,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-//#define CONSTANT_REF_MODE		true
+#define CONSTANT_REF_MODE		true
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -146,7 +146,7 @@ static void set_scale(uint8_t scale)
 static void _set_voltage_on_dac(float v_output)
 {
 	uint16_t cmd_mv = (uint16_t) round(v_output * 1000.0);
-	HAL_StatusTypeDef stat = DAC80501_SetVoltage(&_dac_handle, cmd_mv);
+	DAC80501_SetVoltage(&_dac_handle, cmd_mv);
 	_ref_v = cmd_mv * 0.001;
 }
 
@@ -259,12 +259,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   // Set up DAC
-  DAC80501_Init(&_dac_handle, &hi2c1, 0x48, 1250); //A0 is GND. Internal 1.25V reference used
-  DAC80501_SetGain(&_dac_handle, true); // 2X gain, so up to 2.5V output
-
-  HAL_Delay(10);
-  uint16_t status_val = 0;
-  HAL_StatusTypeDef status_read_success = DAC80501_ReadRegister(&_dac_handle, DAC80501_REG_STATUS, &status_val);
+  DAC80501_Init(&_dac_handle, &hi2c1, 0x48, 2500); //A0 is GND. Internal 2.5V reference used
+  DAC80501_SetGain(&_dac_handle, false); // 1X gain, so up to 2.5V output
 
   set_scale(7); // Lowest current by default
 

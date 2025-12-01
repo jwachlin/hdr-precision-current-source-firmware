@@ -27,14 +27,12 @@
 #define DAC80501_DEVICE_ID      0x0115
 
 /* Configuration Register Bits */
-#define DAC80501_CONFIG_REF_PWDWN   (1 << 8)  // Reference power down
-#define DAC80501_CONFIG_DAC_PWDWN   (1 << 0)  // DAC power down
+#define DAC80501_CONFIG_REF_PWDWN   (1 << 0)  // Reference power down
+#define DAC80501_CONFIG_DAC_PWDWN   (1 << 1)  // DAC power down
 
 /* Gain Register Values */
 #define DAC80501_GAIN_1X        0x0000  // Reference divide by 1
 #define DAC80501_GAIN_2X        0x0001  // Reference divide by 2
-#define DAC80501_GAIN_REF_DIV_2		(1 << 8)
-#define DAC80501_GAIN_REF_DIV_1		(0 << 8)
 
 /* Status Register Bits */
 #define DAC80501_STATUS_REF_ALARM   (1 << 0)

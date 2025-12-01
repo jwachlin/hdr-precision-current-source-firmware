@@ -150,7 +150,6 @@ HAL_StatusTypeDef DAC80501_SetGain(DAC80501_Handle_t *hdac, bool gain_2x) {
 
     hdac->gain_2x = gain_2x;
     uint16_t gain_value = gain_2x ? DAC80501_GAIN_2X : DAC80501_GAIN_1X;
-    gain_value |= DAC80501_GAIN_REF_DIV_2;
 
     return DAC80501_WriteRegister(hdac, DAC80501_REG_GAIN, gain_value);
 }
