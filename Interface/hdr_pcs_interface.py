@@ -1,7 +1,6 @@
 import serial
 import time 
 import struct 
-import array
 import sys 
 import serial.tools.list_ports
 import numpy as np
